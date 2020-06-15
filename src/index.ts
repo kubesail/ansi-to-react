@@ -21,7 +21,7 @@ function ansiToJSON(
   return Anser.ansiToJson(input, {
     json: true,
     remove_empty: true,
-    use_classes
+    use_classes,
   });
 }
 
@@ -126,7 +126,7 @@ function convertBundleIntoReact(
           {
             key: index,
             href,
-            target: "_blank"
+            target: "_blank",
           },
           `${word}`
         )
@@ -144,12 +144,14 @@ declare interface Props {
 }
 
 export default function Ansi(props: Props): JSX.Element {
-  const { className, useClasses, children, linkify } = props;
-  return React.createElement(
-    "code",
-    { className },
-    ansiToJSON(children ?? "", useClasses ?? false).map(
-      convertBundleIntoReact.bind(null, linkify ?? false, useClasses ?? false)
-    )
-  );
+  return React.forwardRef((props: Props, ref: any) => {
+    const { className, useClasses, children, linkify } = props;
+    React.createElement(
+      "code",
+      { className, ref },
+      ansiToJSON(children ?? "", useClasses ?? false).map(
+        convertBundleIntoReact.bind(null, linkify ?? false, useClasses ?? false)
+      )
+    );
+  })(props);
 }
